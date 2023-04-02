@@ -1,1 +1,1 @@
-# deep_learning
+# Youngkeun Lee's Deep Learning Project
