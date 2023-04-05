@@ -7,6 +7,8 @@ class Tester(object):
         self.dataset = dataset
         self.device = device
 
+        self.batch_size = args.batch_size
+
         self.loadModel(args.model, args.dataset)
 
     def test(self):
@@ -14,7 +16,7 @@ class Tester(object):
 
         top_1s, top_5s = list(), list()
         with torch.no_grad():
-            for i, (x, y) in enumerate(self.dataset.train_data):
+            for i, (x, y) in enumerate(self.dataset.test_data):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
@@ -23,7 +25,7 @@ class Tester(object):
                 top_5s.append(top_5)
 
                 print('[Batch] {}/{} [Top-1] {:.2f} [Top-5] {:.2f}' \
-                      .format(i + 1, int(len(self.dataset.train_set) / len(x)) + 1, top_1, top_5))
+                      .format(i + 1, int(len(self.dataset.test_set) / self.batch_size) + 1, top_1, top_5))
                 
         print('[Top-1] {:.2f} [Top-5] {:.2f}'.format(sum(top_1s) / len(top_1s), sum(top_5s) / len(top_5s)))
                 

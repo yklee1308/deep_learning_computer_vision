@@ -9,6 +9,9 @@ class Trainer(object):
         self.dataset = dataset
         self.device = device
 
+        self.epochs = args.epochs
+        self.batch_size = args.batch_size
+
         # Loss Function
         if args.loss_function == 'cross_entropy':
             self.loss_function = CrossEntropyLoss().to(self.device)
@@ -17,9 +20,6 @@ class Trainer(object):
         if args.optimizer == 'stochastic_gradient_descent':
             self.optimizer = SGD(params=self.model.parameters(), lr=args.learning_rate,
                                  momentum=args.momentum, weight_decay=args.weight_decay)
-            
-        self.epochs = args.epochs
-        self.batch_size = args.batch_size
 
         if args.resume_training:
             self.loadModel(args.model, args.dataset)
@@ -57,6 +57,6 @@ class Trainer(object):
         acc = list()
         for k in top_k:
             correct_k = correct[:k].float().sum()
-            acc.append(correct_k.mul_(100 / self.batch_size))
+            acc.append(correct_k.mul_(100 / len(x.t())))
 
         return acc
