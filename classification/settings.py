@@ -20,7 +20,7 @@ parser.add_argument('--learning_rate', type=float, default=0.01, help='learning 
 parser.add_argument('--epochs', type=int, default=100, help='epochs')
 parser.add_argument('--batch_size', type=int, default=128, help='batch size')
 
+parser.add_argument('--resume_training', type=bool, default=False, help='resume_training')
+
 # Environment
 parser.add_argument('--num_workers', type=int, default=16, help='num_workers')
-
-parser.add_argument('--resume_training', type=bool, default=False, help='resume_training')

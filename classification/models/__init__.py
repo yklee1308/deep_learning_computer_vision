@@ -4,6 +4,7 @@ from .vggnet import VGGNet
 from .googlenet import GoogLeNet
 from .resnet import ResNet
 
+
 models = {'LeNet' : LeNet,
           'AlexNet' : AlexNet,
           'VGGNet' : VGGNet,
