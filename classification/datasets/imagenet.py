@@ -2,11 +2,15 @@ from torchvision.datasets import ImageFolder
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
+from datasets.classes import imagenet_classes
+
 
 class ImageNet(object):
     def __init__(self, batch_size, num_workers):
         self.img_shape = (3, 227, 227)
         self.num_classes = 1000
+
+        self.classes = imagenet_classes
 
         self.norm = transforms.Normalize(mean=(0.485, 0.456, 0.406),
                                          std=(0.229, 0.224, 0.225))
