@@ -3,7 +3,7 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 
 
-class MNIST(object):
+class Mnist(object):
     def __init__(self, batch_size, num_workers):
         self.img_shape = (1, 32, 32)
         self.num_classes = 10
