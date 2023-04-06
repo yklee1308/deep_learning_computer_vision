@@ -3,10 +3,10 @@ import argparse
 
 parser = argparse.ArgumentParser(description='classification settings')
 
-# Dataset
+# Model
 parser.add_argument('--model', type=str, default='LeNet',  help='model')
 
-# Model
+# Dataset
 parser.add_argument('--dataset', type=str, default='MNIST', help='dataset')
 
 # Training
@@ -22,5 +22,5 @@ parser.add_argument('--batch_size', type=int, default=128, help='batch size')
 
 parser.add_argument('--resume_training', type=bool, default=False, help='resume_training')
 
-# Environment
+# System
 parser.add_argument('--num_workers', type=int, default=16, help='num_workers')
