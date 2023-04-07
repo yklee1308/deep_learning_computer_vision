@@ -6,8 +6,8 @@ from datasets.classes import imagenet_classes
 
 
 class ImageNet(object):
-    def __init__(self, batch_size, num_workers):
-        self.img_shape = (3, 227, 227)
+    def __init__(self, img_shape, batch_size, num_workers):
+        self.img_shape = img_shape
         self.num_classes = 1000
 
         self.classes = imagenet_classes

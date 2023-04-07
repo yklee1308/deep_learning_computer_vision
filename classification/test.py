@@ -12,7 +12,7 @@ def test(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Set Dataset
-    dataset = getDataset(args.dataset)(batch_size=args.batch_size, num_workers=args.num_workers)
+    dataset = getDataset(args.dataset)(img_shape=args.img_shape, batch_size=args.batch_size, num_workers=args.num_workers)
     print('Successfully loaded dataset : [Dataset] {}\n'.format(args.dataset))
 
     # Set Model

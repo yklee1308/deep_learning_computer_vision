@@ -9,6 +9,9 @@ parser.add_argument('--model', type=str, default='LeNet',  help='model')
 # Dataset
 parser.add_argument('--dataset', type=str, default='MNIST', help='dataset')
 
+# Input
+parser.add_argument('--img_shape', type=tuple, default=(1, 32, 32), help='img_shape')
+
 # Training
 parser.add_argument('--loss_function', type=str, default='cross_entropy', help='loss_function')
 parser.add_argument('--optimizer', type=str, default='stochastic_gradient_descent', help='optimizer')

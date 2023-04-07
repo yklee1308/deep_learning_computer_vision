@@ -6,8 +6,8 @@ from datasets.classes import mnist_classes
 
 
 class Mnist(object):
-    def __init__(self, batch_size, num_workers):
-        self.img_shape = (1, 32, 32)
+    def __init__(self, img_shape, batch_size, num_workers):
+        self.img_shape = img_shape
         self.num_classes = 10
 
         self.classes = mnist_classes
