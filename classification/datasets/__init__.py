@@ -1,8 +1,8 @@
-from .mnist import Mnist
+from .mnist import MNIST
 from .imagenet import ImageNet
 
 
-datasets = {'MNIST' : Mnist,
+datasets = {'MNIST' : MNIST,
             'ImageNet' : ImageNet}
 
 def getDataset(dataset):

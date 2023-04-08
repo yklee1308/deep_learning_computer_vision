@@ -28,7 +28,7 @@ class Trainer(object):
         self.model.train()
 
         for epoch in range(self.epochs):
-            for i, (x, y) in enumerate(self.dataset.train_data):
+            for i, (x, y, _) in enumerate(self.dataset.train_data):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 

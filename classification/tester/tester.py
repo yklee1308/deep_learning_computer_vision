@@ -16,7 +16,7 @@ class Tester(object):
 
         top_1s, top_5s = list(), list()
         with torch.no_grad():
-            for i, (x, y) in enumerate(self.dataset.test_data):
+            for i, (x, y, _) in enumerate(self.dataset.test_data):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
