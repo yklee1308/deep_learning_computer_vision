@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 from torchvision import transforms
 
-from datasets.classes import mnist_classes
+from datasets.classes.mnist_classes import mnist_classes
 
 
 class MNISTCustom(DatasetFolder):
@@ -30,7 +30,7 @@ class MNIST(object):
 
         self.classes = mnist_classes
 
-        self.loader = self.loadImg
+        self.loader = self.loadImage
 
         self.transform = transforms.Compose([transforms.Resize(size=self.img_shape[-1]),
                                              transforms.ToTensor()])
@@ -49,8 +49,12 @@ class MNIST(object):
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,
                                     shuffle=False, num_workers=num_workers, pin_memory=True)
         
-    def loadImg(self, img_path):
+        # Inference Data
+        self.inference_data = DataLoader(dataset=self.test_set, batch_size=1,
+                                         shuffle=True, num_workers=num_workers, pin_memory=True)
+        
+    def loadImage(self, img_path):
         with open(img_path, 'rb') as f:
-            img = Image.open(f).convert('L')
+            img = Image.open(f).convert(mode='L')
 
             return img

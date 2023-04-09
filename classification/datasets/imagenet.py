@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 from torchvision import transforms
 
-from datasets.classes import imagenet_classes
+from datasets.classes.imagenet_classes import imagenet_classes
 
 
 class ImageNetCustom(DatasetFolder):
@@ -30,7 +30,7 @@ class ImageNet(object):
 
         self.classes = imagenet_classes
 
-        self.loader = self.loadImg
+        self.loader = self.loadImage
 
         self.norm = transforms.Normalize(mean=(0.485, 0.456, 0.406),
                                          std=(0.229, 0.224, 0.225))
@@ -59,8 +59,12 @@ class ImageNet(object):
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,
                                     shuffle=False, num_workers=num_workers, pin_memory=True)
         
-    def loadImg(self, img_path):
+        # Inference Data
+        self.inference_data = DataLoader(dataset=self.test_set, batch_size=1,
+                                         shuffle=True, num_workers=num_workers, pin_memory=True)
+        
+    def loadImage(self, img_path):
         with open(img_path, 'rb') as f:
-            img = Image.open(f).convert('RGB')
+            img = Image.open(f).convert(mode='RGB')
 
             return img

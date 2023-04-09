@@ -29,6 +29,9 @@ def test(args):
     tester.test()
     print('Successfully finished testing')
 
+    tester.inference()
+    print('Successfully inferenced')
+
 
 if __name__ == '__main__':
     test(parser.parse_args())
