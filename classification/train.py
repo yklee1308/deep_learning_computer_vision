@@ -1,7 +1,7 @@
 import torch
 from torchsummary import summary
 
-from settings import parser
+from configs import parser
 
 from models import getModel
 from datasets import getDataset
