@@ -4,8 +4,6 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 from torchvision import transforms
 
-from datasets.classes.imagenet_classes import imagenet_classes
-
 
 class ImageNetCustom(DatasetFolder):
     def __init__(self, root, loader, extensions, transform, target_transform):
@@ -28,7 +26,7 @@ class ImageNet(object):
         self.img_shape = img_shape
         self.num_classes = 1000
 
-        self.classes = imagenet_classes
+        self.classes = self.loadClasses(classes_path='C:\Datasets\ILSVRC2012\ILSVRC2012_classes.txt')
 
         self.loader = self.loadImage
 
@@ -68,3 +66,11 @@ class ImageNet(object):
             img = Image.open(f).convert(mode='RGB')
 
             return img
+        
+    def loadClasses(self, classes_path):
+        classes = dict()
+        with open(classes_path, 'r') as f:
+            for i in range(self.num_classes):
+                classes[i] = f.readline().rstrip()
+
+        return classes

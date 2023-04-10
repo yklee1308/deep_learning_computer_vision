@@ -4,8 +4,6 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import DatasetFolder
 from torchvision import transforms
 
-from datasets.classes.mnist_classes import mnist_classes
-
 
 class MNISTCustom(DatasetFolder):
     def __init__(self, root, loader, extensions, transform, target_transform):
@@ -28,7 +26,7 @@ class MNIST(object):
         self.img_shape = img_shape
         self.num_classes = 10
 
-        self.classes = mnist_classes
+        self.classes = self.loadClasses(classes_path='C:\Datasets\MNIST\MNIST_classes.txt')
 
         self.loader = self.loadImage
 
@@ -58,3 +56,11 @@ class MNIST(object):
             img = Image.open(f).convert(mode='L')
 
             return img
+    
+    def loadClasses(self, classes_path):
+        classes = dict()
+        with open(classes_path, 'r') as f:
+            for i in range(self.num_classes):
+                classes[i] = f.readline().rstrip()
+
+        return classes
