@@ -41,7 +41,7 @@ class MNIST(object):
                                      shuffle=True, num_workers=num_workers, pin_memory=True)
 
         # Test Set
-        self.test_set = MNISTCustom(root='C:\Datasets\MNIST\MNIST_img_val',
+        self.test_set = MNISTCustom(root='C:\Datasets\MNIST\MNIST_img_test',
                                     loader=self.loader, extensions='.jpg', transform=self.transform, target_transform=None)
         
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,

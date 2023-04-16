@@ -51,7 +51,7 @@ class ImageNet(object):
                                                   transforms.ToTensor(),
                                                   self.norm])
 
-        self.test_set = ImageNetCustom(root='C:\Datasets\ILSVRC2012\ILSVRC2012_img_val',
+        self.test_set = ImageNetCustom(root='C:\Datasets\ILSVRC2012\ILSVRC2012_img_test',
                                        loader=self.loader, extensions='.jpeg', transform=self.test_transform, target_transform=None)
 
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,

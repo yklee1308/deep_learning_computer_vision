@@ -27,10 +27,10 @@ def train(args):
 
     # Training
     trainer.train()
-    print('Successfully finished training')
+    print('Successfully finished training\n')
 
     trainer.saveModel()
-    print('Successfully saved model')
+    print('Successfully saved model\n')
 
 
 if __name__ == '__main__':

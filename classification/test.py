@@ -23,14 +23,14 @@ def test(args):
 
     # Set Tester
     tester = getTester()(model=model, dataset=dataset, device=device, args=args)
-    print('Successfully loaded tester')
+    print('Successfully loaded tester\n')
 
     # Testing
     tester.test()
-    print('Successfully finished testing')
+    print('Successfully finished testing\n')
 
     tester.inference()
-    print('Successfully inferenced')
+    print('Successfully inferenced\n')
 
 
 if __name__ == '__main__':
