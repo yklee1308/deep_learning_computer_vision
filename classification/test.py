@@ -35,4 +35,3 @@ def test(args):
 
 if __name__ == '__main__':
     test(parser.parse_args())
-    

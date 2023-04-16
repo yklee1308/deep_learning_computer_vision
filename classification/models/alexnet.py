@@ -84,4 +84,3 @@ class AlexNet(Module):
         x = self.fc8(x)
 
         return x
-        

@@ -35,4 +35,3 @@ def train(args):
 
 if __name__ == '__main__':
     train(parser.parse_args())
-    
