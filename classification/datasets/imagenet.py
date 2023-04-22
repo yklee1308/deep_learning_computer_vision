@@ -26,7 +26,7 @@ class ImageNet(object):
         self.img_shape = img_shape
         self.num_classes = 1000
 
-        self.classes = self.loadClasses(classes_path='C:\Datasets\ILSVRC2012\ILSVRC2012_classes.txt')
+        self.classes = self.loadClasses(classes_path='C:\Datasets\ImageNet\ImageNet_classes.txt')
 
         self.loader = self.loadImage
 
@@ -39,7 +39,7 @@ class ImageNet(object):
                                                    transforms.ToTensor(),
                                                    self.norm])
 
-        self.train_set = ImageNetCustom(root='C:\Datasets\ILSVRC2012\ILSVRC2012_img_train',
+        self.train_set = ImageNetCustom(root='C:\Datasets\ImageNet\ImageNet_img_train',
                                         loader=self.loader, extensions='.jpeg', transform=self.train_transform, target_transform=None)
 
         self.train_data = DataLoader(dataset=self.train_set, batch_size=batch_size,
@@ -51,7 +51,7 @@ class ImageNet(object):
                                                   transforms.ToTensor(),
                                                   self.norm])
 
-        self.test_set = ImageNetCustom(root='C:\Datasets\ILSVRC2012\ILSVRC2012_img_test',
+        self.test_set = ImageNetCustom(root='C:\Datasets\ImageNet\ImageNet_img_test',
                                        loader=self.loader, extensions='.jpeg', transform=self.test_transform, target_transform=None)
 
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,
