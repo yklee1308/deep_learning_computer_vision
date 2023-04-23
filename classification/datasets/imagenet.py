@@ -10,7 +10,7 @@ class ImageNetCustom(DatasetFolder):
         super(ImageNetCustom, self).__init__(root=root, loader=loader, extensions=extensions, transform=transform, target_transform=target_transform)
     
     def __getitem__(self, idx):
-        x, y = self.samples[idx], int(self.targets[idx])
+        x, y = self.samples[idx], self.targets[idx]
 
         img_path = x[0]
         img = self.loader(img_path=img_path)
