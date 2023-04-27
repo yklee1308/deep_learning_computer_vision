@@ -115,6 +115,7 @@ class VGGNet(Module):
         x = self.pool5(x)
 
         x = self.pool(x)
+        
         x = torch.flatten(x, start_dim=1)
 
         x = self.fc6(x)

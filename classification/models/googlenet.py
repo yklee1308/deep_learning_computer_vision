@@ -144,6 +144,7 @@ class GoogLeNet(Module):
         x = self.inception5_2(x)
 
         x = self.pool(x)
+        
         x = torch.flatten(x, start_dim=1)
 
         x = self.drop6(x)
