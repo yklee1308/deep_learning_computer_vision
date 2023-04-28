@@ -58,6 +58,7 @@ class VOC2007(object):
     def __init__(self, img_shape, batch_size, num_workers):
         self.img_shape = img_shape
         self.num_classes = 21
+        self.bbox_channels = 4
 
         self.classes = self.loadClasses(classes_path='C:\Datasets\VOC2007\VOC2007_classes.txt')
 
