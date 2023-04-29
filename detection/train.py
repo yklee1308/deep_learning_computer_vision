@@ -16,7 +16,7 @@ def train(args):
     print('Successfully loaded dataset : [Dataset] {}\n'.format(args.dataset))
 
     # Set Model
-    model = getModel(args.model)(in_channels=dataset.img_shape[0], out_channels=dataset.num_classes).to(device)
+    model = getModel(args.model)(in_channels=dataset.img_shape[0], out_channels=(dataset.num_classes, dataset.bbox_channels)).to(device)
     print('Successfully loaded model : [Model] {}\n'.format(args.model))
 
     summary(model, input_size=dataset.img_shape)
