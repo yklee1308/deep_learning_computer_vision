@@ -13,7 +13,7 @@ parser.add_argument('--dataset', type=str, default='VOC2007', help='dataset')
 parser.add_argument('--img_shape', type=tuple, default=(3, 227, 227), help='img_shape')
 
 # Training
-parser.add_argument('--loss_function', type=str, default='CE', help='loss_function')
+parser.add_argument('--loss_function', type=tuple, default=('BCE', 'MSE'), help='loss_function')
 
 parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer')
 
