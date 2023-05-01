@@ -13,8 +13,9 @@ parser.add_argument('--dataset', type=str, default='MNIST', help='dataset')
 parser.add_argument('--img_shape', type=tuple, default=(1, 32, 32), help='img_shape')
 
 # Training
-parser.add_argument('--loss_function', type=str, default='cross_entropy', help='loss_function')
-parser.add_argument('--optimizer', type=str, default='stochastic_gradient_descent', help='optimizer')
+parser.add_argument('--loss_function', type=str, default='CE', help='loss_function')
+
+parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer')
 
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=0.0005, help='weight decay')
