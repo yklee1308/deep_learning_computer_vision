@@ -2,6 +2,7 @@ import torch
 
 from trainer.loss_functions import getLossFunction
 from trainer.optimizers import getOptimizer
+from trainer.loss_functions import computeLoss
 
 
 class Trainer(object):
@@ -30,7 +31,7 @@ class Trainer(object):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
-                loss = self.loss_function(x, y)
+                loss = computeLoss(x, y)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
@@ -46,7 +47,7 @@ class Trainer(object):
 
     def saveModel(self, model, dataset):
         torch.save(self.model.state_dict(), 'classification/weights/{}_{}_weights.pth'.format(model, dataset))
-                
+
     def getAccuracy(self, x, y, top_k):
         _, x = x.topk(k=max(top_k), dim=1, largest=True, sorted=True)
         x = x.t()
