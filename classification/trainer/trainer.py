@@ -1,6 +1,7 @@
 import torch
-from torch.nn import CrossEntropyLoss
-from torch.optim import SGD
+
+from trainer.loss_functions import getLossFunction
+from trainer.optimizers import getOptimizer
 
 
 class Trainer(object):
@@ -13,13 +14,10 @@ class Trainer(object):
         self.batch_size = args.batch_size
 
         # Loss Function
-        if args.loss_function == 'cross_entropy':
-            self.loss_function = CrossEntropyLoss().to(self.device)
+        self.loss_function = getLossFunction(args.loss_function)().to(self.device)
 
         # Optimizer
-        if args.optimizer == 'stochastic_gradient_descent':
-            self.optimizer = SGD(params=self.model.parameters(), lr=args.learning_rate,
-                                 momentum=args.momentum, weight_decay=args.weight_decay)
+        self.optimizer = getOptimizer(args.optimizer)(args, self.model)
 
         if args.resume_training:
             self.loadModel(args.model, args.dataset)
