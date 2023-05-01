@@ -14,7 +14,7 @@ class Trainer(object):
         self.batch_size = args.batch_size
 
         # Loss Function
-        self.loss_function = getLossFunction(args.loss_function)().to(self.device)
+        self.loss_function = getLossFunction(args.loss_function)(self.device)
 
         # Optimizer
         self.optimizer = getOptimizer(args.optimizer)(args, self.model)

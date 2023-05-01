@@ -1,8 +1,8 @@
 from torch.nn import CrossEntropyLoss
 
 
-def getCELoss():
-    return CrossEntropyLoss()
+def getCELoss(device):
+    return CrossEntropyLoss().to(device)
 
 loss_functions = {'CE' : getCELoss}
 
