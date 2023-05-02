@@ -1,7 +1,6 @@
-from matplotlib import pyplot as plt
-
 import torch
 
+from processing import getProcessing
 from metric import getMetric
 
 
@@ -12,6 +11,9 @@ class Tester(object):
         self.device = device
 
         self.batch_size = args.batch_size
+
+        # Processing
+        self.processing = getProcessing()(dataset=self.dataset)
 
         # Metric
         self.metric = getMetric()()
@@ -39,20 +41,7 @@ class Tester(object):
             x, y = x.to(self.device), y.to(self.device)
             x = self.model(x)
 
-            self.showInference(x, y, img_path=img_path, channels=self.dataset.img_shape[0])
+            self.processing.visualize(x, y, img_path=img_path)
             
     def loadModel(self, model, dataset):
         self.model.load_state_dict(torch.load('classification/weights/{}_{}_weights.pth'.format(model, dataset)))
-
-    def showInference(self, x, y, img_path, channels):
-        x, y, img_path = torch.argmax(x).item(), y[0].item(), img_path[0]
-
-        img = plt.imread(fname=img_path)
-        if channels == 1:
-            plt.imshow(img, cmap='gray')
-        elif channels == 3:
-            plt.imshow(img)
-            
-        plt.title('[Prediction] {} [Label] {}'.format(self.dataset.classes[x], self.dataset.classes[y]))
-
-        plt.show()
