@@ -1,7 +1,9 @@
 import torch
 
-from trainer.loss_functions import getLossFunction
-from trainer.optimizers import getOptimizer
+from metrics import getMetric
+from .loss_functions import getLossFunction
+from .optimizers import getOptimizer
+from .loss_functions import computeLoss
 
 
 class Trainer(object):
@@ -13,11 +15,14 @@ class Trainer(object):
         self.epochs = args.epochs
         self.batch_size = args.batch_size
 
+        # Metric
+        self.metric = getMetric()()
+
         # Loss Function
-        self.loss_function = getLossFunction(args.loss_function)(self.device)
+        self.loss_function = getLossFunction(args.loss_function)(device=self.device)
 
         # Optimizer
-        self.optimizer = getOptimizer(args.optimizer)(args, self.model)
+        self.optimizer = getOptimizer(args.optimizer)(args=args, model=self.model)
 
         if args.resume_training:
             self.loadModel(args.model, args.dataset)
@@ -30,31 +35,17 @@ class Trainer(object):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
-                loss = self.loss_function(x, y)
+                loss = computeLoss(x, y, self.loss_function)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
-                top_1 , top_5 = self.getAccuracy(x, y, top_k=(1, 5))
-
-                print('[Epoch] {}/{} [Batch] {}/{} [Loss] : {:.4f} [Top-1] {:.2f} [Top-5] {:.2f}' \
-                      .format(epoch, self.epochs, i + 1, int(len(self.dataset.train_set) / self.batch_size) + 1, \
-                              loss, top_1, top_5))
+                acc = self.metric.computeAccuracy(x, y, mode='train')
+                self.metric.printAccuracy(mode='train', epoch=(epoch + 1, self.epochs),
+                                          batch=(i + 1, int(len(self.dataset.train_set) / self.batch_size) + 1), loss=loss, acc=acc)
                 
     def loadModel(self, model, dataset):
-        self.model.load_state_dict(torch.load('classification/weights/{}_{}_weights.pth'.format(model, dataset)))
+        self.model.load_state_dict(torch.load('detection/weights/{}_{}_weights.pth'.format(model, dataset)))
 
     def saveModel(self, model, dataset):
-        torch.save(self.model.state_dict(), 'classification/weights/{}_{}_weights.pth'.format(model, dataset))
-                
-    def getAccuracy(self, x, y, top_k):
-        _, x = x.topk(k=max(top_k), dim=1, largest=True, sorted=True)
-        x = x.t()
-        correct = x.eq(y.expand_as(other=x))
-
-        acc = list()
-        for k in top_k:
-            correct_k = correct[:k].float().sum()
-            acc.append(correct_k.mul_(100 / len(x.t())))
-
-        return acc
+        torch.save(self.model.state_dict(), 'detection/weights/{}_{}_weights.pth'.format(model, dataset))
