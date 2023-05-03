@@ -88,13 +88,13 @@ class BboxRegressor(Module):
     def __init__(self, out_channels):
         super(BboxRegressor, self).__init__()
 
-        # Layer : FC1
-        self.fc1 = nn.Linear(in_features=6 * 6 * 256, out_features=out_channels)
+        # Layer : FC
+        self.fc = nn.Linear(in_features=6 * 6 * 256, out_features=out_channels)
 
     def forward(self, x):
         x = torch.flatten(x, start_dim=1)
 
-        x = self.fc1(x)
+        x = self.fc(x)
 
         return x
 
