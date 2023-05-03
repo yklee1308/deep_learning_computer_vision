@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 
 import torch
 
+
 class Processing(object):
     def __init__(self, dataset):
         self.classes = dataset.classes
