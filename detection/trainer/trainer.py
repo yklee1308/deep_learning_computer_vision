@@ -1,5 +1,6 @@
 import torch
 
+from processings import getProcessing
 from metrics import getMetric
 from .loss_functions import getLossFunction
 from .optimizers import getOptimizer
@@ -15,8 +16,11 @@ class Trainer(object):
         self.epochs = args.epochs
         self.batch_size = args.batch_size
 
+        # Processing
+        self.processing = getProcessing(args.model)(dataset=self.dataset)
+
         # Metric
-        self.metric = getMetric()()
+        self.metric = getMetric(args.dataset)()
 
         # Loss Function
         self.loss_function = getLossFunction(args.loss_function)(device=self.device)
