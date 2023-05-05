@@ -19,10 +19,10 @@ class Trainer(object):
         self.metric = getMetric()()
 
         # Loss Function
-        self.loss_function = getLossFunction(args.loss_function)(device=self.device)
+        self.loss_function = getLossFunction(args.loss_function, device=self.device)
 
         # Optimizer
-        self.optimizer = getOptimizer(args.optimizer)(args=args, model=self.model)
+        self.optimizer = getOptimizer(args.optimizer, args=args, model=self.model)
 
         if args.resume_training:
             self.loadModel(args.model, args.dataset)

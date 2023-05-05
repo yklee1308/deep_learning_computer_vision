@@ -6,5 +6,5 @@ def getSGD(args, model):
 
 optimizers = {'SGD' : getSGD}
 
-def getOptimizer(optimizer):
-    return optimizers[optimizer]
+def getOptimizer(optimizer, args, model):
+    return optimizers[optimizer](args=args, model=model)
