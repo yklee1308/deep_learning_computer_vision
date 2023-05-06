@@ -13,8 +13,10 @@ class ImageNetCustom(DatasetFolder):
         x, y = self.samples[idx], self.targets[idx]
 
         img_path = x[0]
-        img = self.loader(img_path=img_path)
-        x = self.transform(img)
+        x = self.loader(img_path=img_path)
+        
+        if self.transform != None:
+            x = self.transform(x)
 
         if self.target_transform != None:
             y = self.target_transform(y)
