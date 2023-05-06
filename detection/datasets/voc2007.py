@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from PIL import Image
 from xml.etree.ElementTree import parse
 
@@ -22,8 +23,10 @@ class VOC2007Custom(Dataset):
         x, y = self.samples[idx], self.targets[idx]
 
         img_path = x
-        img = self.loader(img_path=img_path)
-        x = self.transform(img)
+        x = self.loader(img_path=img_path)
+
+        if self.transform != None:
+            x = self.transform(x)
 
         if self.target_transform != None:
             y = self.target_transform(y)
@@ -63,6 +66,7 @@ class VOC2007(object):
         self.classes = self.loadClasses(classes_path='C:\Datasets\VOC2007\VOC2007_classes.txt')
 
         self.loader = self.loadImage
+        self.collator = self.collate
 
         self.norm = transforms.Normalize(mean=(0.485, 0.456, 0.406),
                                          std=(0.229, 0.224, 0.225))
@@ -72,22 +76,22 @@ class VOC2007(object):
 
         # Train Set
         self.train_set = VOC2007Custom(root='C:\Datasets\VOC2007\VOC2007_img_train',
-                                       loader=self.loader, classes=self.classes, transform=self.transform, target_transform=None)
+                                       loader=self.loader, classes=self.classes, transform=None, target_transform=None)
 
         self.train_data = DataLoader(dataset=self.train_set, batch_size=batch_size,
-                                     shuffle=True, num_workers=num_workers, pin_memory=True)
+                                     shuffle=True, num_workers=num_workers, collate_fn=self.collator, pin_memory=True)
 
         # Test Set
 
         self.test_set = VOC2007Custom(root='C:\Datasets\VOC2007\VOC2007_img_test',
-                                      loader=self.loader, classes=self.classes, transform=self.transform, target_transform=None)
+                                      loader=self.loader, classes=self.classes, transform=None, target_transform=None)
 
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,
-                                    shuffle=False, num_workers=num_workers, pin_memory=True)
+                                    shuffle=False, num_workers=num_workers, collate_fn=self.collator, pin_memory=True)
         
         # Inference Data
         self.inference_data = DataLoader(dataset=self.test_set, batch_size=1,
-                                         shuffle=True, num_workers=num_workers, pin_memory=True)
+                                         shuffle=True, num_workers=num_workers, collate_fn=self.collator, pin_memory=True)
 
     def loadImage(self, img_path):
         with open(img_path, 'rb') as f:
@@ -102,3 +106,12 @@ class VOC2007(object):
                 classes[i] = f.readline().rstrip()
 
         return classes
+    
+    def collate(self, batch):
+        x, y, img_path = list(list() for i in range(3))
+        for sample in batch:
+            x.append(list(np.array(sample[0])))
+            y.append(sample[1])
+            img_path.append(sample[2])
+
+        return x, y, img_path
