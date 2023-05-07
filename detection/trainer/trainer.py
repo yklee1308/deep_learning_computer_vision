@@ -36,6 +36,8 @@ class Trainer(object):
 
         for epoch in range(self.epochs):
             for i, (x, y, _) in enumerate(self.dataset.train_data):
+                x, y = self.processing.preprocess(x, y)
+
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
