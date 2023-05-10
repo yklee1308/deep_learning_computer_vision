@@ -36,7 +36,7 @@ class VOC2007Custom(Dataset):
     def makeDataset(self, path, classes):
         samples = os.listdir(path=path)
         for i in range(len(samples)):
-            samples[i] = path + '\\' + samples[i]
+            samples[i] = path + '/' + samples[i]
 
         targets = list(list() for i in range(len(samples)))
         for i in range(len(samples)):
@@ -59,11 +59,13 @@ class VOC2007Custom(Dataset):
 
 class VOC2007(object):
     def __init__(self, img_shape, batch_size, num_workers):
+        self.dataset_path = 'C:/Datasets/VOC2007/'
+
         self.img_shape = img_shape
         self.num_classes = 21
         self.bbox_channels = 4
 
-        self.classes = self.loadClasses(classes_path='C:\Datasets\VOC2007\VOC2007_classes.txt')
+        self.classes = self.loadClasses(classes_path=self.dataset_path + 'VOC2007_classes.txt')
 
         self.loader = self.loadImage
         self.collator = self.collate
@@ -75,7 +77,7 @@ class VOC2007(object):
                                              self.norm])
 
         # Train Set
-        self.train_set = VOC2007Custom(root='C:\Datasets\VOC2007\VOC2007_img_train',
+        self.train_set = VOC2007Custom(root=self.dataset_path + 'VOC2007_img_train',
                                        loader=self.loader, classes=self.classes, transform=None, target_transform=None)
 
         self.train_data = DataLoader(dataset=self.train_set, batch_size=batch_size,
@@ -83,7 +85,7 @@ class VOC2007(object):
 
         # Test Set
 
-        self.test_set = VOC2007Custom(root='C:\Datasets\VOC2007\VOC2007_img_test',
+        self.test_set = VOC2007Custom(root=self.dataset_path + 'VOC2007_img_test',
                                       loader=self.loader, classes=self.classes, transform=None, target_transform=None)
 
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,

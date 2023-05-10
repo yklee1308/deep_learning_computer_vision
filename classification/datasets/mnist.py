@@ -25,10 +25,12 @@ class MNISTCustom(DatasetFolder):
 
 class MNIST(object):
     def __init__(self, img_shape, batch_size, num_workers):
+        self.dataset_path = 'C:/Datasets/MNIST/'
+
         self.img_shape = img_shape
         self.num_classes = 10
 
-        self.classes = self.loadClasses(classes_path='C:\Datasets\MNIST\MNIST_classes.txt')
+        self.classes = self.loadClasses(classes_path=self.dataset_path + 'MNIST_classes.txt')
 
         self.loader = self.loadImage
 
@@ -36,14 +38,14 @@ class MNIST(object):
                                              transforms.ToTensor()])
 
         # Train Set
-        self.train_set = MNISTCustom(root='C:\Datasets\MNIST\MNIST_img_train',
+        self.train_set = MNISTCustom(root=self.dataset_path + 'MNIST_img_train',
                                      loader=self.loader, extensions='.jpg', transform=self.transform, target_transform=None)
         
         self.train_data = DataLoader(dataset=self.train_set, batch_size=batch_size,
                                      shuffle=True, num_workers=num_workers, pin_memory=True)
 
         # Test Set
-        self.test_set = MNISTCustom(root='C:\Datasets\MNIST\MNIST_img_test',
+        self.test_set = MNISTCustom(root=self.dataset_path + 'MNIST_img_test',
                                     loader=self.loader, extensions='.jpg', transform=self.transform, target_transform=None)
         
         self.test_data = DataLoader(dataset=self.test_set, batch_size=batch_size,
