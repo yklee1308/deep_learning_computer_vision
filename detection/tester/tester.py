@@ -42,8 +42,12 @@ class Tester(object):
         
         with torch.no_grad():
             x, y, img_path = next(iter(self.dataset.inference_data))
+            x, y = self.processing.preprocess(x, y)
+
             x, y = x.to(self.device), y.to(self.device)
             x = self.model(x)
+
+            x, y = self.processing.postprocess(x, y)
 
             self.processing.visualize(x, y, img_path=img_path)
             

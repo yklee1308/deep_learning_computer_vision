@@ -46,6 +46,8 @@ class Trainer(object):
                 loss.backward()
                 self.optimizer.step()
 
+                x, y = self.processing.postprocess(x, y)
+
                 acc = self.metric.computeAccuracy(x, y, mode='train')
                 self.metric.printAccuracy(mode='train', epoch=(epoch + 1, self.epochs),
                                           batch=(i + 1, int(len(self.dataset.train_set) / self.batch_size) + 1), loss=loss, acc=acc)
