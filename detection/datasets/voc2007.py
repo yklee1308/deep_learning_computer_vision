@@ -112,7 +112,7 @@ class VOC2007(object):
     def collate(self, batch):
         x, y, img_path = list(list() for i in range(3))
         for sample in batch:
-            x.append(list(np.array(sample[0])))
+            x.append(np.array(sample[0]).tolist())
             y.append(sample[1])
             img_path.append(sample[2])
 
