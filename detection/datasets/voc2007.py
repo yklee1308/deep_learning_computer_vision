@@ -48,8 +48,8 @@ class VOC2007Custom(Dataset):
             target = list(list() for i in range(2))
             for j in range(len(objects)):
                 target_class = list(k for k, v in classes.items() if v == objects[j].find('name').text)[0]
-                target_bbox = (int(objects[j].find('bndbox').find('xmin').text), int(objects[j].find('bndbox').find('ymin').text),
-                               int(objects[j].find('bndbox').find('xmax').text), int(objects[j].find('bndbox').find('ymax').text))
+                target_bbox = [int(objects[j].find('bndbox').find('xmin').text), int(objects[j].find('bndbox').find('ymin').text),
+                               int(objects[j].find('bndbox').find('xmax').text), int(objects[j].find('bndbox').find('ymax').text)]
                 target[0].append(target_class)
                 target[1].append(target_bbox)
                 
