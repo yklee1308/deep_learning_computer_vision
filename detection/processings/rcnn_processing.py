@@ -32,6 +32,16 @@ class RCNNProcessing(object):
         plt.show()
 
     def runSelectiveSearch(self, img, num_regions):
-        _, regions = selective_search(np.array(img, dtype=np.uint8), scale=500, sigma=0.9, min_size=10)
+        _, region_data = selective_search(np.array(img, dtype=np.uint8), scale=100, sigma=0.9, min_size=100)
+        region_data = sorted(region_data, key=lambda x: x['size'], reverse=True)
+
+        regions = list()
+        for i in range(len(region_data)):
+            region = [region_data[i]['rect'][0], region_data[i]['rect'][1],
+                      region_data[i]['rect'][0] + region_data[i]['rect'][2],  region_data[i]['rect'][1] + region_data[i]['rect'][3]]
+            if region not in regions:
+                regions.append(region)
+
+        regions = regions[:num_regions]
 
         return regions
