@@ -37,8 +37,8 @@ class RCNNProcessing(object):
 
         regions = list()
         for i in range(len(region_data)):
-            region = [region_data[i]['rect'][0], region_data[i]['rect'][1],
-                      region_data[i]['rect'][0] + region_data[i]['rect'][2],  region_data[i]['rect'][1] + region_data[i]['rect'][3]]
+            x, y, w, h = region_data[i]['rect']
+            region = [x, y, x + w, y + h]
             if region not in regions:
                 regions.append(region)
 
