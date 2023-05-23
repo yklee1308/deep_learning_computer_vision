@@ -3,18 +3,34 @@ from matplotlib import pyplot as plt
 from selectivesearch import selective_search
 
 import torch
+from torchvision import transforms
 
 
 class RCNNProcessing(object):
     def __init__(self, dataset):
+        self.img_shape = dataset.img_shape
         self.classes = dataset.classes
-        self.channels = dataset.img_shape[0]
+        self.transform = dataset.transform
 
         # Selective Search
         self.num_regions = 128
 
     def preprocess(self, x, y):
-        regions = self.runSelectiveSearch(x[0], num_regions=self.num_regions)
+        img, label = np.array(x[0], dtype=np.uint8), y[0]
+
+        regions = self.runSelectiveSearch(img, num_regions=self.num_regions)
+
+        x, y = list(), list()
+        for i in range(self.num_regions):
+            tl_x, tl_y, br_x, br_y = regions[i]
+            sample = img[tl_y:br_y, tl_x:br_x]
+            sample = transforms.ToPILImage()(sample)
+            sample = transforms.Resize(size=self.img_shape[-1])(sample)
+            sample = self.transform(sample)
+
+            x.append(sample)
+
+        x, y = transforms.ToTensor()(x), transforms.ToTensor()(y)
 
         return x, y
 
@@ -32,13 +48,13 @@ class RCNNProcessing(object):
         plt.show()
 
     def runSelectiveSearch(self, img, num_regions):
-        _, region_data = selective_search(np.array(img, dtype=np.uint8), scale=100, sigma=0.9, min_size=100)
+        _, region_data = selective_search(img, scale=100, sigma=0.9, min_size=100)
         region_data = sorted(region_data, key=lambda x: x['size'], reverse=True)
 
         regions = list()
         for i in range(len(region_data)):
             x, y, w, h = region_data[i]['rect']
-            region = [x, y, x + w, y + h]
+            region = [x, y, x + w + 1, y + h + 1]
             if region not in regions:
                 regions.append(region)
 
