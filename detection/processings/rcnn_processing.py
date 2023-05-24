@@ -23,14 +23,14 @@ class RCNNProcessing(object):
         x, y = list(), list()
         for i in range(self.num_regions):
             tl_x, tl_y, br_x, br_y = regions[i]
-            sample = img[tl_y:br_y, tl_x:br_x]
+            sample = img[tl_y:br_y + 1, tl_x:br_x + 1]
             sample = transforms.ToPILImage()(sample)
-            sample = transforms.Resize(size=self.img_shape[-1])(sample)
+            sample = transforms.Resize(size=self.img_shape[1:])(sample)
             sample = self.transform(sample)
 
             x.append(sample)
 
-        x, y = transforms.ToTensor()(x), transforms.ToTensor()(y)
+        x = torch.stack(x, dim=0)
 
         return x, y
 
@@ -54,7 +54,7 @@ class RCNNProcessing(object):
         regions = list()
         for i in range(len(region_data)):
             x, y, w, h = region_data[i]['rect']
-            region = [x, y, x + w + 1, y + h + 1]
+            region = [x, y, x + w , y + h]
             if region not in regions:
                 regions.append(region)
 
