@@ -20,17 +20,16 @@ class RCNNProcessing(object):
 
         regions = self.runSelectiveSearch(img, num_regions=self.num_regions)
 
-        x, y = list(), list()
+        x, y = list(), list(list() for i in range(2))
         for i in range(self.num_regions):
             tl_x, tl_y, br_x, br_y = regions[i]
-            sample = img[tl_y:br_y + 1, tl_x:br_x + 1]
+            sample = img[tl_y:br_y , tl_x:br_x]
             sample = transforms.ToPILImage()(sample)
             sample = transforms.Resize(size=self.img_shape[1:])(sample)
             sample = self.transform(sample)
-
             x.append(sample)
 
-        x = torch.stack(x, dim=0)
+        x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
 
         return x, y
 
@@ -54,10 +53,21 @@ class RCNNProcessing(object):
         regions = list()
         for i in range(len(region_data)):
             x, y, w, h = region_data[i]['rect']
-            region = [x, y, x + w , y + h]
+            region = (x, y, x + w + 1, y + h + 1)
             if region not in regions:
                 regions.append(region)
 
         regions = regions[:num_regions]
 
         return regions
+    
+    def computeIoU(self, bbox1, bbox2):
+        intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
+
+        bbox1_area = (bbox1[2] - bbox1[0]) * (bbox1[3] - bbox1[1])
+        bbox2_area = (bbox2[2] - bbox2[0]) * (bbox2[3] - bbox2[1])
+        intersection_area = max(intersection[2] - intersection[0], 0) * max(intersection[3] - intersection[1], 0)
+
+        iou = intersection_area / (bbox1_area + bbox2_area - intersection_area)
+
+        return iou
