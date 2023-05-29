@@ -23,5 +23,12 @@ def getLossFunction(loss_function, device):
     
     return multi_loss_function
 
-def computeLoss(x, y, loss_function):
-    return loss_function(x, y)
+def computeLoss(x, y, multi_loss_function, loss_weight):
+    losses = list()
+    for i in range(len(multi_loss_function)):
+        loss = loss_weight[i] * multi_loss_function[i](x[i], y[i])
+        losses.append(loss)
+        
+    loss = sum(losses)
+
+    return loss

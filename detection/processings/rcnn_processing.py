@@ -47,7 +47,7 @@ class RCNNProcessing(object):
         num_positives = int(self.num_regions * self.positive_ratio)
         x = (x * (int(num_positives / len(x)) + 1))[:num_positives]
         for i in range(len(y)):
-            y[i] = (y[i] * (int(num_positives / len(y[i])) + 1))[:num_positives] 
+            y[i] = (y[i] * (int(num_positives / len(y[i])) + 1))[:num_positives]
 
         # Negative Samples
         for region in regions:

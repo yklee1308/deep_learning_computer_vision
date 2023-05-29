@@ -39,7 +39,7 @@ class Trainer(object):
             for i, (x, y, _) in enumerate(self.dataset.train_data):
                 x, y = self.processing.preprocess(x, y)
 
-                x, y = x.to(self.device), y.to(self.device)
+                x, y = x.to(self.device), list(target.to(self.device) for target in y)
                 x = self.model(x)
 
                 loss = computeLoss(x, y, self.loss_function, self.loss_weight)
