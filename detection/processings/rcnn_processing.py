@@ -3,12 +3,14 @@ from matplotlib import pyplot as plt
 from selectivesearch import selective_search
 
 import torch
+from torch.nn.functional import one_hot
 from torchvision import transforms
 
 
 class RCNNProcessing(object):
     def __init__(self, dataset):
         self.img_shape = dataset.img_shape
+        self.num_classes = dataset.num_classes
         self.classes = dataset.classes
         self.transform = dataset.transform
 
@@ -40,7 +42,8 @@ class RCNNProcessing(object):
                 x.append(sample)
 
                 label_idx = ious.index(max(ious))
-                target_class, target_bbox = torch.tensor(label[0][label_idx]), torch.tensor(label[1][label_idx])
+                target_class = one_hot(torch.tensor(label[0][label_idx]), num_classes=self.num_classes).float()
+                target_bbox = torch.tensor(label[1][label_idx])
                 y[0].append(target_class)
                 y[1].append(target_bbox)
 
@@ -59,7 +62,7 @@ class RCNNProcessing(object):
                 sample = self.transform(sample)
                 x.append(sample)
 
-                target_class = torch.tensor(0)
+                target_class = one_hot(torch.tensor(0), num_classes=self.num_classes).float()
                 y[0].append(target_class)
 
         x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
