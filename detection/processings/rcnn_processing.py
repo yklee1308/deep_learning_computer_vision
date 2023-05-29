@@ -19,9 +19,12 @@ class RCNNProcessing(object):
     def preprocess(self, x, y):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
 
+        # Selective Search
         regions = self.runSelectiveSearch(img)
 
         x, y = list(), list(list() for i in range(2))
+        
+        # Positive Samples
         for region in regions:
             ious = list()
             for bbox in label[1]:
@@ -35,6 +38,29 @@ class RCNNProcessing(object):
                 sample = transforms.Resize(size=self.img_shape[1:])(sample)
                 sample = self.transform(sample)
                 x.append(sample)
+
+                label_idx = ious.index(max(ious))
+                target_class, target_bbox = torch.tensor(label[0][label_idx]), torch.tensor(label[1][label_idx])
+                y[0].append(target_class)
+                y[1].append(target_bbox)
+
+        num_positives = int(self.num_regions * self.positive_ratio)
+        x = (x * (int(num_positives / len(x)) + 1))[:num_positives]
+        for i in range(len(y)):
+            y[i] = (y[i] * (int(num_positives / len(y[i])) + 1))[:num_positives] 
+
+        # Negative Samples
+        for region in regions:
+            if region not in x and len(x) < self.num_regions:
+                tl_x, tl_y, br_x, br_y = region
+                sample = img[tl_y:br_y , tl_x:br_x]
+                sample = transforms.ToPILImage()(sample)
+                sample = transforms.Resize(size=self.img_shape[1:])(sample)
+                sample = self.transform(sample)
+                x.append(sample)
+
+                target_class = torch.tensor(0)
+                y[0].append(target_class)
 
         x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
 

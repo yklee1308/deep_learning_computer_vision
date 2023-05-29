@@ -22,7 +22,7 @@ parser.add_argument('--weight_decay', type=float, default=0.0005, help='weight d
 parser.add_argument('--learning_rate', type=float, default=0.01, help='learning rate')
 
 parser.add_argument('--epochs', type=int, default=100, help='epochs')
-parser.add_argument('--batch_size', type=int, default=128, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch size')
 
 parser.add_argument('--resume_training', type=bool, default=False, help='resume_training')
 
