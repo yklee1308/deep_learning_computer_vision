@@ -14,9 +14,9 @@ parser.add_argument('--img_shape', type=tuple, default=(3, 227, 227), help='img_
 
 # Training
 parser.add_argument('--loss_function', type=tuple, default=('BCE', 'MSE'), help='loss_function')
+parser.add_argument('--loss_weight', type=tuple, default=(1, 1), help='loss_weight')
 
 parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer')
-
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
 parser.add_argument('--weight_decay', type=float, default=0.0005, help='weight decay')
 parser.add_argument('--learning_rate', type=float, default=0.01, help='learning rate')

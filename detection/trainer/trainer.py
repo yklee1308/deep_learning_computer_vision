@@ -24,6 +24,7 @@ class Trainer(object):
 
         # Loss Function
         self.loss_function = getLossFunction(args.loss_function, device=self.device)
+        self.loss_weight = args.loss_weight
 
         # Optimizer
         self.optimizer = getOptimizer(args.optimizer, args=args, model=self.model)
@@ -41,7 +42,7 @@ class Trainer(object):
                 x, y = x.to(self.device), y.to(self.device)
                 x = self.model(x)
 
-                loss = computeLoss(x, y, self.loss_function)
+                loss = computeLoss(x, y, self.loss_function, self.loss_weight)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
