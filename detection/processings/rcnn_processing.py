@@ -34,35 +34,27 @@ class RCNNProcessing(object):
                 ious.append(iou)
 
             if max(ious) > self.iou_th:
-                tl_x, tl_y, br_x, br_y = region
-                sample = img[tl_y:br_y , tl_x:br_x]
-                sample = transforms.ToPILImage()(sample)
-                sample = transforms.Resize(size=self.img_shape[1:])(sample)
-                sample = self.transform(sample)
+                sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
                 x.append(sample)
 
-                label_idx = ious.index(max(ious))
-                target_class = one_hot(torch.tensor(label[0][label_idx]), num_classes=self.num_classes).float()
-                target_bbox = torch.tensor(label[1][label_idx])
+                target_class = self.transformTargetClass(label, idx=ious.index(max(ious)), num_classes=self.num_classes)
+                target_bbox = self.transformTargetBbox(label, idx=ious.index(max(ious)))
                 y[0].append(target_class)
                 y[1].append(target_bbox)
 
         num_positives = int(self.num_regions * self.positive_ratio)
-        x = (x * (int(num_positives / len(x)) + 1))[:num_positives]
-        for i in range(len(y)):
-            y[i] = (y[i] * (int(num_positives / len(y[i])) + 1))[:num_positives]
+        for i in range(num_positives - len(x)):
+            x.append(x[int(i % num_positives)])
+            for j in range(len(y)):
+                y[j].append(y[j][int(i % num_positives)])
 
         # Negative Samples
         for region in regions:
             if region not in x and len(x) < self.num_regions:
-                tl_x, tl_y, br_x, br_y = region
-                sample = img[tl_y:br_y , tl_x:br_x]
-                sample = transforms.ToPILImage()(sample)
-                sample = transforms.Resize(size=self.img_shape[1:])(sample)
-                sample = self.transform(sample)
+                sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
                 x.append(sample)
 
-                target_class = one_hot(torch.tensor(0), num_classes=self.num_classes).float()
+                target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
                 y[0].append(target_class)
 
         x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
@@ -82,6 +74,39 @@ class RCNNProcessing(object):
 
         plt.show()
 
+    def transformSample(self, img, transform, region, img_shape):
+        tl_x, tl_y, br_x, br_y = region
+        sample = img[tl_y:br_y , tl_x:br_x]
+        sample = transforms.ToPILImage()(sample)
+        sample = transforms.Resize(size=img_shape[1:])(sample)
+        sample = transform(sample)
+
+        return sample
+    
+    def transformTargetClass(self, label, idx, num_classes):
+        if idx != None:
+            target_class = one_hot(torch.tensor(label[0][idx]), num_classes=num_classes).float()
+        else:
+            target_class = one_hot(torch.tensor(0), num_classes=num_classes).float()
+
+        return target_class
+    
+    def transformTargetBbox(self, label, idx):
+        target_bbox = torch.tensor(label[1][idx])
+
+        return target_bbox
+    
+    def computeIoU(self, bbox1, bbox2):
+        intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
+
+        bbox1_area = (bbox1[2] - bbox1[0]) * (bbox1[3] - bbox1[1])
+        bbox2_area = (bbox2[2] - bbox2[0]) * (bbox2[3] - bbox2[1])
+        intersection_area = max(intersection[2] - intersection[0], 0) * max(intersection[3] - intersection[1], 0)
+
+        iou = intersection_area / (bbox1_area + bbox2_area - intersection_area)
+
+        return iou
+
     def runSelectiveSearch(self, img):
         _, region_data = selective_search(img, scale=100, sigma=0.8, min_size=100)
         region_data = sorted(region_data, key=lambda x: x['size'], reverse=True)
@@ -94,14 +119,3 @@ class RCNNProcessing(object):
                 regions.append(region)
 
         return regions
-    
-    def computeIoU(self, bbox1, bbox2):
-        intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
-
-        bbox1_area = (bbox1[2] - bbox1[0]) * (bbox1[3] - bbox1[1])
-        bbox2_area = (bbox2[2] - bbox2[0]) * (bbox2[3] - bbox2[1])
-        intersection_area = max(intersection[2] - intersection[0], 0) * max(intersection[3] - intersection[1], 0)
-
-        iou = intersection_area / (bbox1_area + bbox2_area - intersection_area)
-
-        return iou
