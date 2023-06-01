@@ -84,7 +84,6 @@ class VOC2007(object):
                                      shuffle=True, num_workers=num_workers, collate_fn=self.collator, pin_memory=True)
 
         # Test Set
-
         self.test_set = VOC2007Custom(root=self.dataset_path + 'VOC2007_img_test',
                                       loader=self.loader, classes=self.classes, transform=None, target_transform=None)
 

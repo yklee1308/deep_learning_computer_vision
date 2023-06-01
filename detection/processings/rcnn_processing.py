@@ -38,7 +38,7 @@ class RCNNProcessing(object):
                 x.append(sample)
 
                 target_class = self.transformTargetClass(label, idx=ious.index(max(ious)), num_classes=self.num_classes)
-                target_bbox = self.transformTargetBbox(label, idx=ious.index(max(ious)))
+                target_bbox = self.transformTargetBbox(label, idx=ious.index(max(ious)), region=region)
                 y[0].append(target_class)
                 y[1].append(target_bbox)
 
@@ -91,21 +91,27 @@ class RCNNProcessing(object):
 
         return target_class
     
-    def transformTargetBbox(self, label, idx):
-        target_bbox = torch.tensor(label[1][idx])
+    def transformTargetBbox(self, label, idx, region):
+        tl_x, tl_y, br_x, br_y = label[1][idx]
+        bbox_w = br_x - tl_x
+        bbox_h = br_y - tl_y
+        bbox_x = tl_x + (bbox_w / 2)
+        bbox_y = tl_y + (bbox_h / 2)
+
+        tl_x, tl_y, br_x, br_y = region
+        region_w = br_x - tl_x
+        region_h = br_y - tl_y
+        region_x = tl_x + (region_w / 2)
+        region_y = tl_y + (region_h / 2)
+
+        x = (bbox_x - region_x) / region_w
+        y = (bbox_y - region_y) / region_h
+        w = np.log(bbox_w / region_w)
+        h = np.log(bbox_h / region_h)
+
+        target_bbox = torch.tensor((x, y, w, h)).float()
 
         return target_bbox
-    
-    def computeIoU(self, bbox1, bbox2):
-        intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
-
-        bbox1_area = (bbox1[2] - bbox1[0]) * (bbox1[3] - bbox1[1])
-        bbox2_area = (bbox2[2] - bbox2[0]) * (bbox2[3] - bbox2[1])
-        intersection_area = max(intersection[2] - intersection[0], 0) * max(intersection[3] - intersection[1], 0)
-
-        iou = intersection_area / (bbox1_area + bbox2_area - intersection_area)
-
-        return iou
 
     def runSelectiveSearch(self, img):
         _, region_data = selective_search(img, scale=100, sigma=0.8, min_size=100)
@@ -119,3 +125,14 @@ class RCNNProcessing(object):
                 regions.append(region)
 
         return regions
+    
+    def computeIoU(self, bbox1, bbox2):
+        intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
+
+        bbox1_area = (bbox1[2] - bbox1[0]) * (bbox1[3] - bbox1[1])
+        bbox2_area = (bbox2[2] - bbox2[0]) * (bbox2[3] - bbox2[1])
+        intersection_area = max(intersection[2] - intersection[0], 0) * max(intersection[3] - intersection[1], 0)
+
+        iou = intersection_area / (bbox1_area + bbox2_area - intersection_area)
+
+        return iou
