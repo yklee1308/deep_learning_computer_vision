@@ -1,5 +1,5 @@
 from torch.nn import CrossEntropyLoss
-from torch.nn import BCELoss
+from torch.nn import BCEWithLogitsLoss
 from torch.nn import MSELoss
 
 
@@ -7,7 +7,7 @@ def getCELoss(device):
     return CrossEntropyLoss().to(device)
 
 def getBCELoss(device):
-    return BCELoss().to(device)
+    return BCEWithLogitsLoss().to(device)
 
 def getMSELoss(device):
     return MSELoss().to(device)
@@ -26,7 +26,7 @@ def getLossFunction(loss_function, device):
 def computeLoss(x, y, multi_loss_function, loss_weight):
     losses = list()
     for i in range(len(multi_loss_function)):
-        loss = loss_weight[i] * multi_loss_function[i](x[i], y[i])
+        loss = loss_weight[i] * multi_loss_function[i](x[i][:y[i].shape[0]], y[i])
         losses.append(loss)
         
     loss = sum(losses)
