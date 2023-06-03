@@ -18,48 +18,62 @@ class RCNNProcessing(object):
         self.positive_ratio = 0.25
         self.iou_th = 0.5
 
-    def preprocess(self, x, y):
+    def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
 
         # Selective Search
         regions = self.runSelectiveSearch(img)
 
-        x, y = list(), list(list() for i in range(2))
-        
-        # Positive Samples
-        for region in regions:
-            ious = list()
-            for bbox in label[1]:
-                iou = self.computeIoU(region, bbox)
-                ious.append(iou)
+        if y != None:
+            x, y = list(), list(list() for i in range(2))
+            
+            # Positive Samples
+            for region in regions:
+                ious = list()
+                for bbox in label[1]:
+                    iou = self.computeIoU(region, bbox)
+                    ious.append(iou)
 
-            if max(ious) > self.iou_th:
-                sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
-                x.append(sample)
+                if max(ious) > self.iou_th:
+                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    x.append(sample)
 
-                target_class = self.transformTargetClass(label, idx=ious.index(max(ious)), num_classes=self.num_classes)
-                target_bbox = self.transformTargetBbox(label, idx=ious.index(max(ious)), region=region)
-                y[0].append(target_class)
-                y[1].append(target_bbox)
+                    target_class = self.transformTargetClass(label, idx=ious.index(max(ious)), num_classes=self.num_classes)
+                    target_bbox = self.transformTargetBbox(label, idx=ious.index(max(ious)), region=region)
+                    y[0].append(target_class)
+                    y[1].append(target_bbox)
 
-        num_positives = int(self.num_regions * self.positive_ratio)
-        for i in range(num_positives - len(x)):
-            x.append(x[int(i % num_positives)])
-            for j in range(len(y)):
-                y[j].append(y[j][int(i % num_positives)])
+            if len(x) > 0:
+                num_positives = int(self.num_regions * self.positive_ratio)
+                for i in range(num_positives - len(x)):
+                    x.append(x[int(i % num_positives)])
+                    for j in range(len(y)):
+                        y[j].append(y[j][int(i % num_positives)])
 
-        # Negative Samples
-        for region in regions:
-            if region not in x and len(x) < self.num_regions:
-                sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
-                x.append(sample)
+            # Negative Samples
+            for region in regions:
+                if region not in x and len(x) < self.num_regions:
+                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    x.append(sample)
 
-                target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
-                y[0].append(target_class)
+                    target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
+                    y[0].append(target_class)
 
-        x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
+            x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
 
-        return x, y
+            return x, y
+            
+        else:
+            x = list()
+            for region in regions:
+                if len(x) < self.num_regions:
+                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    x.append(sample)
+
+            x = torch.stack(x, dim=0)
+
+            return x
+
 
     def visualize(self, x, y, img_path):
         x, y, img_path = torch.argmax(x).item(), y[0].item(), img_path[0]

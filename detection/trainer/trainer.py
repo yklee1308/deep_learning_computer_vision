@@ -37,17 +37,17 @@ class Trainer(object):
 
         for epoch in range(self.epochs):
             for i, (x, y, _) in enumerate(self.dataset.train_data):
-                x, y = self.processing.preprocess(x, y)
+                x, y_t = self.processing.preprocess(x, y)
 
-                x, y = x.to(self.device), list(target.to(self.device) for target in y)
+                x, y_t = x.to(self.device), list(target.to(self.device) for target in y_t)
                 x = self.model(x)
 
-                loss = computeLoss(x, y, self.loss_function, self.loss_weight)
+                loss = computeLoss(x, y_t, self.loss_function, self.loss_weight)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
 
-                x, y = self.processing.postprocess(x, y)
+                x = self.processing.postprocess(x)
 
                 acc = self.metric.computeAccuracy(x, y, mode='train')
                 self.metric.printAccuracy(mode='train', epoch=(epoch + 1, self.epochs),
