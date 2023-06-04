@@ -10,7 +10,7 @@ This project is a deep-learning framework for image classification made by Young
 
 ## Installation
 ### Conda
-1. Clone this repo to your path ${PATH}.
+1. Clone this repo to your path "**${PATH}**".
 ```
 cd ${PATH}
 git clone https://github.com/yklee1308/deep_learning_computer_vision.git
@@ -70,4 +70,41 @@ All datasets should be converted to the following format:
     |
     └————{DATASET_NAME}_classes.txt
 ```
-The names of the class folders, image files and file extensions can be changed. However, the names of the folders and file with {DATASET_NAME} should follow the given format.
+The names of the class folders, image files and file extensions can be changed. However, the names of the folders and file with "**{DATASET_NAME}**" should follow the given format.
+
+## Training
+1. Set model, dataset and parameters in "*config.py*".
+
+2. Run "*train.py*".
+```
+python train.py
+```
+
+### Pre-trained Weights
+
+|   Model   |  Dataset |                                                   Pre-trained Weights                                                    |
+|:---------:|:--------:|:------------------------------------------------------------------------------------------------------------------------:|
+|   LeNet   |   MNIST  |     [LeNet_MNIST_weights.pth](https://drive.google.com/file/d/18YcCyKQOBUAaqdg4ldHXEGWgXKV70Yj9/view?usp=drive_link)     |
+|  AlexNet  | ImageNet |   [AlexNet_ImageNet_weights.pth](https://drive.google.com/file/d/1u4ezzh8zXmdJ8Z0kbhJpwGfqxXLBMt2-/view?usp=drive_link)  |
+|   VGGNet  | ImageNet |   [VGGNet_ImageNet_weights.pth](https://drive.google.com/file/d/1Ij696OrPo3aXIFLUeHNymfqmGEctwOdo/view?usp=drive_link)   |
+| GoogLeNet | ImageNet |  [GoogLeNet_ImageNet_weights.pth](https://drive.google.com/file/d/1V7Ghf9Nt5xyzV6XqcoT7teQS7imsjMOt/view?usp=drive_link) |
+|   ResNet  | ImageNet |   [ResNet_ImageNet_weights.pth](https://drive.google.com/file/d/1EODoYaSaQizpedx8x8C1hMt-HNOsCpgC/view?usp=drive_link)   |
+
+## Testing
+1. Set model, dataset and parameters in "*config.py*".
+
+2. Check pre-trained weights "*{MODEL_NAME}_{DATASET_NAME}_weights.pth*" file is in "**/weights**" folder.
+
+3. Run "*test.py*".
+```
+python test.py
+```
+
+### Results
+|   Model   |  Dataset | Top-1 Accuracy | Top-5 Accuracy |
+|:---------:|:--------:|:--------------:|:--------------:|
+|   LeNet   |   MNIST  |      98.82     |      100.0     |
+|  AlexNet  | ImageNet |      56.46     |      79.16     |
+|   VGGNet  | ImageNet |      71.59     |      90.39     |
+| GoogLeNet | ImageNet |      59.00     |      81.84     |
+|   ResNet  | ImageNet |      74.83     |      92.12     |
