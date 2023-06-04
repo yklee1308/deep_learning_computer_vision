@@ -73,7 +73,7 @@ All datasets should be converted to the following format:
 The names of the class folders, image files and file extensions can be changed. However, the names of the folders and file with "**{DATASET_NAME}**" should follow the given format.
 
 ## Training
-1. Set model, dataset and parameters in "*config.py*".
+1. Set model, dataset and parameters in "*configs.py*".
 
 2. Run "*train.py*".
 ```
@@ -81,7 +81,7 @@ python train.py
 ```
 
 ### Pre-trained Weights
-
+You can download the pre-trained weights from below:
 |   Model   |  Dataset |                                                   Pre-trained Weights                                                    |
 |:---------:|:--------:|:------------------------------------------------------------------------------------------------------------------------:|
 |   LeNet   |   MNIST  |     [LeNet_MNIST_weights.pth](https://drive.google.com/file/d/18YcCyKQOBUAaqdg4ldHXEGWgXKV70Yj9/view?usp=drive_link)     |
@@ -91,7 +91,7 @@ python train.py
 |   ResNet  | ImageNet |   [ResNet_ImageNet_weights.pth](https://drive.google.com/file/d/1EODoYaSaQizpedx8x8C1hMt-HNOsCpgC/view?usp=drive_link)   |
 
 ## Testing
-1. Set model, dataset and parameters in "*config.py*".
+1. Set model, dataset and parameters in "*configs.py*".
 
 2. Check pre-trained weights "*{MODEL_NAME}_{DATASET_NAME}_weights.pth*" file is in "**/weights**" folder.
 
@@ -101,6 +101,7 @@ python test.py
 ```
 
 ### Results
+The classification results of the models on the datasets are as follows:
 |   Model   |  Dataset | Top-1 Accuracy | Top-5 Accuracy |
 |:---------:|:--------:|:--------------:|:--------------:|
 |   LeNet   |   MNIST  |      98.82     |      100.0     |
