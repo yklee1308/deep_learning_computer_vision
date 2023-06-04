@@ -1,4 +1,4 @@
-# Deep Learning for Classfication
+# Deep Learning for Classification
 ## Introduction
 This project is a deep-learning framework for image classification made by Youngkeun Lee.
 
