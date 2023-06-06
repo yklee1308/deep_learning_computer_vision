@@ -73,7 +73,7 @@ All datasets should be converted to the following format:
 The names of the class folders, image files and file extensions can be changed. However, the names of the folders and file with "**{DATASET_NAME}**" should follow the given format.
 
 ## Training
-1. Set model, dataset and parameters in "*configs.py*".
+1. Set model, dataset and parameters in "*configs.py*". There are sample configuration files in "**/configs**" folder that you can simply copy or edit to use.
 
 2. Run "*train.py*".
 ```
@@ -91,7 +91,7 @@ You can download the pre-trained weights from below:
 |   ResNet  | ImageNet |   [ResNet_ImageNet_weights.pth](https://drive.google.com/file/d/1EODoYaSaQizpedx8x8C1hMt-HNOsCpgC/view?usp=drive_link)   |
 
 ## Testing
-1. Set model, dataset and parameters in "*configs.py*".
+1. Set model, dataset and parameters in "*configs.py*". There are sample configuration files in "**/configs**" folder that you can simply copy or edit to use.
 
 2. Check pre-trained weights "*{MODEL_NAME}_{DATASET_NAME}_weights.pth*" file is in "**/weights**" folder.
 
