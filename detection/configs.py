@@ -18,11 +18,11 @@ parser.add_argument('--loss_weight', type=tuple, default=(1, 1), help='loss_weig
 
 parser.add_argument('--optimizer', type=str, default='SGD', help='optimizer')
 parser.add_argument('--momentum', type=float, default=0.9, help='momentum')
-parser.add_argument('--weight_decay', type=float, default=0.0005, help='weight decay')
-parser.add_argument('--learning_rate', type=float, default=0.01, help='learning rate')
+parser.add_argument('--weight_decay', type=float, default=0.0005, help='weight_decay')
+parser.add_argument('--learning_rate', type=float, default=0.01, help='learning_rate')
 
 parser.add_argument('--epochs', type=int, default=100, help='epochs')
-parser.add_argument('--batch_size', type=int, default=1, help='batch size')
+parser.add_argument('--batch_size', type=int, default=1, help='batch_size')
 
 parser.add_argument('--resume_training', type=bool, default=False, help='resume_training')
 
