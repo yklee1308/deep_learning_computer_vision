@@ -12,6 +12,11 @@ parser.add_argument('--dataset', type=str, default='VOC2007', help='dataset')
 # Input
 parser.add_argument('--img_shape', type=tuple, default=(3, 227, 227), help='img_shape')
 
+# Processing
+parser.add_argument('--num_regions', type=int, default=128, help='num_regions')
+parser.add_argument('--positive_ratio', type=float, default=0.25, help='positive_ratio')
+parser.add_argument('--iou_th', type=float, default=0.5, help='iou_th')
+
 # Training
 parser.add_argument('--loss_function', type=tuple, default=('BCE', 'MSE'), help='loss_function')
 parser.add_argument('--loss_weight', type=tuple, default=(1, 1), help='loss_weight')

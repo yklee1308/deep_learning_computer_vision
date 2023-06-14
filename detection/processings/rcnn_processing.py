@@ -8,15 +8,15 @@ from torchvision import transforms
 
 
 class RCNNProcessing(object):
-    def __init__(self, dataset):
+    def __init__(self, dataset, args):
         self.img_shape = dataset.img_shape
         self.num_classes = dataset.num_classes
         self.classes = dataset.classes
         self.transform = dataset.transform
 
-        self.num_regions = 128
-        self.positive_ratio = 0.25
-        self.iou_th = 0.5
+        self.num_regions = args.num_regions
+        self.positive_ratio = args.positive_ratio
+        self.iou_th = args.iou_th
 
     def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
@@ -74,7 +74,6 @@ class RCNNProcessing(object):
 
             return x
 
-
     def visualize(self, x, y, img_path):
         x, y, img_path = torch.argmax(x).item(), y[0].item(), img_path[0]
 
@@ -90,7 +89,7 @@ class RCNNProcessing(object):
 
     def transformSample(self, img, transform, region, img_shape):
         tl_x, tl_y, br_x, br_y = region
-        sample = img[tl_y:br_y , tl_x:br_x]
+        sample = img[tl_y:br_y, tl_x:br_x]
         sample = transforms.ToPILImage()(sample)
         sample = transforms.Resize(size=img_shape[1:])(sample)
         sample = transform(sample)
