@@ -16,6 +16,7 @@ parser.add_argument('--img_shape', type=tuple, default=(3, 227, 227), help='img_
 parser.add_argument('--num_regions', type=int, default=128, help='num_regions')
 parser.add_argument('--positive_ratio', type=float, default=0.25, help='positive_ratio')
 parser.add_argument('--iou_th', type=float, default=0.5, help='iou_th')
+parser.add_argument('--conf_score_th', type=float, default=0.3, help='conf_score_th')
 
 # Training
 parser.add_argument('--loss_function', type=tuple, default=('BCE', 'MSE'), help='loss_function')
