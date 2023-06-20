@@ -17,6 +17,7 @@ class RCNNProcessing(object):
         self.num_regions = args.num_regions
         self.positive_ratio = args.positive_ratio
         self.iou_th = args.iou_th
+        self.conf_score_th = args.conf_score_th
 
     def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
@@ -73,6 +74,20 @@ class RCNNProcessing(object):
             x = torch.stack(x, dim=0)
 
             return x
+        
+    def postprocess(self, x):
+        class_bboxes, conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
+        for i in range(self.num_regions):
+            if max(x[0][i]) > self.conf_score_th:
+                class_bboxes[torch.argmax(x[0][i])].append(x[1][i])
+                conf_scores[torch.argmax(x[0][i])].append(max(x[0][i]))
+
+        x = list(list() for i in range(self.num_classes))
+        for i in range(self.num_classes):
+            if len(class_bboxes[i]) > 0:
+                class_bboxes[i], conf_scores[i] = torch.stack(class_bboxes[i], dim=0), torch.stack(conf_scores[i], dim=0)
+
+        return x
 
     def visualize(self, x, y, img_path):
         x, y, img_path = torch.argmax(x).item(), y[0].item(), img_path[0]
