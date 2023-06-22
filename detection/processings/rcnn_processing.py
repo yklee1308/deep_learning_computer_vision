@@ -78,9 +78,10 @@ class RCNNProcessing(object):
     def postprocess(self, x):
         class_bboxes, conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
         for i in range(self.num_regions):
-            if max(x[0][i]) > self.conf_score_th:
-                class_bboxes[torch.argmax(x[0][i])].append(x[1][i])
-                conf_scores[torch.argmax(x[0][i])].append(max(x[0][i]))
+            for j in range(self.num_classes):
+                if x[0][i][j] > self.conf_score_th and j != 0:
+                    class_bboxes[j].append(x[1][i])
+                    conf_scores[j].append(x[0][i][j])
 
         x = list(list() for i in range(self.num_classes))
         for i in range(self.num_classes):
