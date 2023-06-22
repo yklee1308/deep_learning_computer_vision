@@ -5,6 +5,7 @@ from selectivesearch import selective_search
 import torch
 from torch.nn.functional import one_hot
 from torchvision import transforms
+from torchvision.ops import nms
 
 
 class RCNNProcessing(object):
@@ -76,17 +77,21 @@ class RCNNProcessing(object):
             return x
         
     def postprocess(self, x):
-        class_bboxes, conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
+        class_bboxes, class_conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
         for i in range(self.num_regions):
             for j in range(self.num_classes):
                 if x[0][i][j] > self.conf_score_th and j != 0:
                     class_bboxes[j].append(x[1][i])
-                    conf_scores[j].append(x[0][i][j])
+                    class_conf_scores[j].append(x[0][i][j])
 
         x = list(list() for i in range(self.num_classes))
         for i in range(self.num_classes):
             if len(class_bboxes[i]) > 0:
-                class_bboxes[i], conf_scores[i] = torch.stack(class_bboxes[i], dim=0), torch.stack(conf_scores[i], dim=0)
+                class_bboxes[i], class_conf_scores[i] = torch.stack(class_bboxes[i], dim=0), torch.stack(class_conf_scores[i], dim=0)
+
+                # NMS
+                bboxes = self.runNMS(class_bboxes[i], class_conf_scores[i], iou_th=self.iou_th)
+                x[i] = bboxes
 
         return x
 
@@ -154,6 +159,11 @@ class RCNNProcessing(object):
                 regions.append(region)
 
         return regions
+    
+    def runNMS(self, bboxes, conf_scores, iou_th):
+        bboxes = nms(bboxes, conf_scores, iou_threshold=iou_th)
+
+        return bboxes
     
     def computeIoU(self, bbox1, bbox2):
         intersection = (max(bbox1[0], bbox2[0]), max(bbox1[1], bbox2[1]), min(bbox1[2], bbox2[2]), min(bbox1[3], bbox2[3]))
