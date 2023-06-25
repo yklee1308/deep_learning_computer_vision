@@ -20,6 +20,8 @@ class RCNNProcessing(object):
         self.iou_th = args.iou_th
         self.conf_score_th = args.conf_score_th
 
+        self.regions = None
+
     def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
 
@@ -66,6 +68,8 @@ class RCNNProcessing(object):
             return x, y
             
         else:
+            self.regions = regions
+
             x = list()
             for region in regions:
                 if len(x) < self.num_regions:
@@ -80,9 +84,11 @@ class RCNNProcessing(object):
         class_bboxes, class_conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
         for i in range(self.num_regions):
             for j in range(self.num_classes):
-                if x[0][i][j] > self.conf_score_th and j != 0:
-                    class_bboxes[j].append(x[1][i])
-                    class_conf_scores[j].append(x[0][i][j])
+                conf_score = x[0][i][j]
+                if conf_score > self.conf_score_th and j != 0:
+                    bbox = self.InverseTransformBbox(x[1][i])
+                    class_bboxes[j].append(bbox)
+                    class_conf_scores[j].append(conf_score)
 
         x = list(list() for i in range(self.num_classes))
         for i in range(self.num_classes):
