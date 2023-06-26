@@ -82,11 +82,11 @@ class RCNNProcessing(object):
         
     def postprocess(self, x):
         class_bboxes, class_conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
-        for i in range(self.num_regions):
+        for i, region in enumerate(self.regions):
             for j in range(self.num_classes):
                 conf_score = x[0][i][j]
                 if conf_score > self.conf_score_th and j != 0:
-                    bbox = self.InverseTransformBbox(x[1][i])
+                    bbox = self.InverseTransformBbox(x[1][i], region=region)
                     class_bboxes[j].append(bbox)
                     class_conf_scores[j].append(conf_score)
 
@@ -152,6 +152,24 @@ class RCNNProcessing(object):
         target_bbox = torch.tensor((x, y, w, h)).float()
 
         return target_bbox
+    
+    def InverseTransformBbox(self, bbox, region):
+        bbox_x, bbox_y, bbox_w, bbox_h = bbox
+
+        tl_x, tl_y, br_x, br_y = region
+        region_w = br_x - tl_x
+        region_h = br_y - tl_y
+        region_x = tl_x + (region_w / 2)
+        region_y = tl_y + (region_h / 2)
+
+        x = (bbox_x * region_w) + region_x
+        y = (bbox_y * region_h) + region_y
+        w = np.exp(bbox_w) * region_w
+        h = np.exp(bbox_h) * region_h
+
+        bbox = torch.tensor((x, y, w, h)).float()
+
+        return bbox
 
     def runSelectiveSearch(self, img):
         _, region_data = selective_search(img, scale=100, sigma=0.8, min_size=100)
