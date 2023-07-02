@@ -68,8 +68,6 @@ class RCNNProcessing(object):
             return x, y
             
         else:
-            self.regions = regions
-
             x = list()
             for region in regions:
                 if len(x) < self.num_regions:
@@ -86,7 +84,7 @@ class RCNNProcessing(object):
             for j in range(self.num_classes):
                 conf_score = x[0][i][j]
                 if conf_score > self.conf_score_th and j != 0:
-                    bbox = self.InverseTransformBbox(x[1][i], region=region)
+                    bbox = self.inverseTransformBbox(x[1][i], region=region)
                     class_bboxes[j].append(bbox)
                     class_conf_scores[j].append(conf_score)
 
@@ -153,7 +151,7 @@ class RCNNProcessing(object):
 
         return target_bbox
     
-    def InverseTransformBbox(self, bbox, region):
+    def inverseTransformBbox(self, bbox, region):
         bbox_x, bbox_y, bbox_w, bbox_h = bbox
 
         tl_x, tl_y, br_x, br_y = region
@@ -167,7 +165,7 @@ class RCNNProcessing(object):
         w = np.exp(bbox_w) * region_w
         h = np.exp(bbox_h) * region_h
 
-        bbox = torch.tensor((x, y, w, h)).float()
+        bbox = torch.tensor((x, y, w, h)).int()
 
         return bbox
 
