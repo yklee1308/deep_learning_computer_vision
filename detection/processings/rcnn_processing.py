@@ -20,7 +20,7 @@ class RCNNProcessing(object):
         self.iou_th = args.iou_th
         self.conf_score_th = args.conf_score_th
 
-        self.regions = None
+        self.region_proposals = None
 
     def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
@@ -30,6 +30,8 @@ class RCNNProcessing(object):
 
         if y != None:
             x, y = list(), list(list() for i in range(2))
+
+            region_proposals = list()
             
             # Positive Samples
             for region in regions:
@@ -47,12 +49,16 @@ class RCNNProcessing(object):
                     y[0].append(target_class)
                     y[1].append(target_bbox)
 
+                    region_proposal = torch.tensor(region)
+                    region_proposals.append(region_proposal)
+
             if len(x) > 0:
                 num_positives = int(self.num_regions * self.positive_ratio)
                 for i in range(num_positives - len(x)):
                     x.append(x[int(i % num_positives)])
                     for j in range(len(y)):
                         y[j].append(y[j][int(i % num_positives)])
+                    region_proposals.append(region_proposals[int(i % num_positives)])
 
             # Negative Samples
             for region in regions:
@@ -63,7 +69,12 @@ class RCNNProcessing(object):
                     target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
                     y[0].append(target_class)
 
+                    region_proposal = torch.tensor(region)
+                    region_proposals.append(region_proposal)
+
             x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
+
+            self.region_proposals = torch.stack(region_proposals, dim=0)
 
             return x, y
             
@@ -74,13 +85,18 @@ class RCNNProcessing(object):
                     sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
                     x.append(sample)
 
+                    region_proposal = torch.tensor(region)
+                    region_proposals.append(region_proposal)
+
             x = torch.stack(x, dim=0)
+
+            self.region_proposals = torch.stack(region_proposals, dim=0)
 
             return x
         
     def postprocess(self, x):
         class_bboxes, class_conf_scores = list(list() for i in range(self.num_classes)), list(list() for i in range(self.num_classes))
-        for i, region in enumerate(self.regions):
+        for i, region in enumerate(self.region_proposals):
             for j in range(self.num_classes):
                 conf_score = x[0][i][j]
                 if conf_score > self.conf_score_th and j != 0:
