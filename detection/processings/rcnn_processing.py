@@ -30,7 +30,6 @@ class RCNNProcessing(object):
 
         if y != None:
             x, y = list(), list(list() for i in range(2))
-
             region_proposals = list()
             
             # Positive Samples
@@ -80,6 +79,7 @@ class RCNNProcessing(object):
             
         else:
             x = list()
+            region_proposals = list()
             for region in regions:
                 if len(x) < self.num_regions:
                     sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
@@ -181,7 +181,7 @@ class RCNNProcessing(object):
         w = np.exp(bbox_w) * region_w
         h = np.exp(bbox_h) * region_h
 
-        bbox = torch.tensor((x, y, w, h)).int()
+        bbox = (int(x), int(y), int(w), int(h))
 
         return bbox
 
