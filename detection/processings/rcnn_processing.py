@@ -27,10 +27,11 @@ class RCNNProcessing(object):
 
         # Selective Search
         regions = self.runSelectiveSearch(img)
+        
+        region_proposals = list()
 
         if y != None:
             x, y = list(), list(list() for i in range(2))
-            region_proposals = list()
             
             # Positive Samples
             for region in regions:
@@ -79,7 +80,6 @@ class RCNNProcessing(object):
             
         else:
             x = list()
-            region_proposals = list()
             for region in regions:
                 if len(x) < self.num_regions:
                     sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
