@@ -174,7 +174,12 @@ class RCNNProcessing(object):
         w = np.exp(bbox_w) * region_w
         h = np.exp(bbox_h) * region_h
 
-        bbox = (int(x), int(y), int(w), int(h))
+        tl_x = int(x - (w / 2))
+        tl_y = int(y - (h / 2))
+        br_x = int(x + (w / 2))
+        br_y = int(y + (h / 2))
+
+        bbox = (tl_x, tl_y, br_x, br_y)
 
         return bbox
 
