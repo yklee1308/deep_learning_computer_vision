@@ -28,7 +28,7 @@ class RCNNProcessing(object):
         # Selective Search
         regions = self.runSelectiveSearch(img)
         
-        region_proposals = list()
+        self.region_proposals = list()
 
         if y != None:
             x, y = list(), list(list() for i in range(2))
@@ -49,8 +49,7 @@ class RCNNProcessing(object):
                     y[0].append(target_class)
                     y[1].append(target_bbox)
 
-                    region_proposal = torch.tensor(region)
-                    region_proposals.append(region_proposal)
+                    self.region_proposals.append(region)
 
             if len(x) > 0:
                 num_positives = int(self.num_regions * self.positive_ratio)
@@ -58,7 +57,7 @@ class RCNNProcessing(object):
                     x.append(x[int(i % num_positives)])
                     for j in range(len(y)):
                         y[j].append(y[j][int(i % num_positives)])
-                    region_proposals.append(region_proposals[int(i % num_positives)])
+                    self.region_proposals.append(self.region_proposals[int(i % num_positives)])
 
             # Negative Samples
             for region in regions:
@@ -69,12 +68,9 @@ class RCNNProcessing(object):
                     target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
                     y[0].append(target_class)
 
-                    region_proposal = torch.tensor(region)
-                    region_proposals.append(region_proposal)
+                    self.region_proposals.append(region)
 
             x, y = torch.stack(x, dim=0), list(torch.stack(target, dim=0) for target in y)
-
-            self.region_proposals = torch.stack(region_proposals, dim=0)
 
             return x, y
             
@@ -85,12 +81,9 @@ class RCNNProcessing(object):
                     sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
                     x.append(sample)
 
-                    region_proposal = torch.tensor(region)
-                    region_proposals.append(region_proposal)
+                    self.region_proposals.append(region)
 
             x = torch.stack(x, dim=0)
-
-            self.region_proposals = torch.stack(region_proposals, dim=0)
 
             return x
         
@@ -168,7 +161,7 @@ class RCNNProcessing(object):
         return target_bbox
     
     def inverseTransformBbox(self, bbox, region):
-        bbox_x, bbox_y, bbox_w, bbox_h = bbox
+        bbox_x, bbox_y, bbox_w, bbox_h = bbox.tolist()
 
         tl_x, tl_y, br_x, br_y = region
         region_w = br_x - tl_x
