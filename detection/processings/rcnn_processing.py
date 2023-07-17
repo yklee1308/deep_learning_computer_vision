@@ -21,9 +21,12 @@ class RCNNProcessing(object):
         self.conf_score_th = args.conf_score_th
 
         self.region_proposals = None
+        self.img_shape = None
 
     def preprocess(self, x, y=None):
         img, label = np.array(x[0], dtype=np.uint8), y[0]
+
+        self.img_shape = img.shape
 
         # Selective Search
         regions = self.runSelectiveSearch(img)
