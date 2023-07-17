@@ -58,10 +58,10 @@ class VOC2007Custom(Dataset):
         return samples, targets
 
 class VOC2007(object):
-    def __init__(self, img_shape, batch_size, num_workers):
+    def __init__(self, input_shape, batch_size, num_workers):
         self.dataset_path = 'C:/Datasets/VOC2007/'
 
-        self.img_shape = img_shape
+        self.input_shape = input_shape
         self.num_classes = 21
         self.bbox_channels = 4
 

@@ -24,10 +24,10 @@ class ImageNetCustom(DatasetFolder):
         return x, y, img_path
 
 class ImageNet(object):
-    def __init__(self, img_shape, batch_size, num_workers):
+    def __init__(self, input_shape, batch_size, num_workers):
         self.dataset_path = 'C:/Datasets/ImageNet/'
 
-        self.img_shape = img_shape
+        self.input_shape = input_shape
         self.num_classes = 1000
 
         self.classes = self.loadClasses(classes_path=self.dataset_path + 'ImageNet_classes.txt')
@@ -38,7 +38,7 @@ class ImageNet(object):
                                          std=(0.229, 0.224, 0.225))
 
         # Train Set
-        self.train_transform = transforms.Compose([transforms.RandomResizedCrop(size=self.img_shape[-1]),
+        self.train_transform = transforms.Compose([transforms.RandomResizedCrop(size=self.input_shape[-1]),
                                                    transforms.RandomHorizontalFlip(),
                                                    transforms.ToTensor(),
                                                    self.norm])
@@ -51,7 +51,7 @@ class ImageNet(object):
 
         # Test Set
         self.test_transform = transforms.Compose([transforms.Resize(size=256),
-                                                  transforms.CenterCrop(size=self.img_shape[-1]),
+                                                  transforms.CenterCrop(size=self.input_shape[-1]),
                                                   transforms.ToTensor(),
                                                   self.norm])
 

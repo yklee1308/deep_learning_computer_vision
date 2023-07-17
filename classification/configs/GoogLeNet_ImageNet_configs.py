@@ -10,7 +10,7 @@ parser.add_argument('--model', type=str, default='GoogLeNet',  help='model')
 parser.add_argument('--dataset', type=str, default='ImageNet', help='dataset')
 
 # Input
-parser.add_argument('--img_shape', type=tuple, default=(3, 224, 224), help='img_shape')
+parser.add_argument('--input_shape', type=tuple, default=(3, 224, 224), help='input_shape')
 
 # Training
 parser.add_argument('--loss_function', type=str, default='CE', help='loss_function')

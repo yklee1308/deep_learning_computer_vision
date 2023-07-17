@@ -24,17 +24,17 @@ class MNISTCustom(DatasetFolder):
         return x, y, img_path
 
 class MNIST(object):
-    def __init__(self, img_shape, batch_size, num_workers):
+    def __init__(self, input_shape, batch_size, num_workers):
         self.dataset_path = 'C:/Datasets/MNIST/'
 
-        self.img_shape = img_shape
+        self.input_shape = input_shape
         self.num_classes = 10
 
         self.classes = self.loadClasses(classes_path=self.dataset_path + 'MNIST_classes.txt')
 
         self.loader = self.loadImage
 
-        self.transform = transforms.Compose([transforms.Resize(size=self.img_shape[-1]),
+        self.transform = transforms.Compose([transforms.Resize(size=self.input_shape[-1]),
                                              transforms.ToTensor()])
 
         # Train Set

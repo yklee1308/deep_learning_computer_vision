@@ -10,7 +10,7 @@ from torchvision.ops import nms
 
 class RCNNProcessing(object):
     def __init__(self, dataset, args):
-        self.img_shape = dataset.img_shape
+        self.input_shape = dataset.input_shape
         self.num_classes = dataset.num_classes
         self.classes = dataset.classes
         self.transform = dataset.transform
@@ -41,7 +41,7 @@ class RCNNProcessing(object):
                     ious.append(iou)
 
                 if max(ious) > self.iou_th:
-                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    sample = self.transformSample(img, transform=self.transform, region=region, input_shape=self.input_shape)
                     x.append(sample)
 
                     target_class = self.transformTargetClass(label, idx=ious.index(max(ious)), num_classes=self.num_classes)
@@ -62,7 +62,7 @@ class RCNNProcessing(object):
             # Negative Samples
             for region in regions:
                 if region not in x and len(x) < self.num_regions:
-                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    sample = self.transformSample(img, transform=self.transform, region=region, input_shape=self.input_shape)
                     x.append(sample)
 
                     target_class = self.transformTargetClass(label, idx=None, num_classes=self.num_classes)
@@ -78,7 +78,7 @@ class RCNNProcessing(object):
             x = list()
             for region in regions:
                 if len(x) < self.num_regions:
-                    sample = self.transformSample(img, transform=self.transform, region=region, img_shape=self.img_shape)
+                    sample = self.transformSample(img, transform=self.transform, region=region, input_shape=self.input_shape)
                     x.append(sample)
 
                     self.region_proposals.append(region)
@@ -121,11 +121,11 @@ class RCNNProcessing(object):
 
         plt.show()
 
-    def transformSample(self, img, transform, region, img_shape):
+    def transformSample(self, img, transform, region, input_shape):
         tl_x, tl_y, br_x, br_y = region
         sample = img[tl_y:br_y, tl_x:br_x]
         sample = transforms.ToPILImage()(sample)
-        sample = transforms.Resize(size=img_shape[1:])(sample)
+        sample = transforms.Resize(size=input_shape[1:])(sample)
         sample = transform(sample)
 
         return sample

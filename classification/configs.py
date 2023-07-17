@@ -10,7 +10,7 @@ parser.add_argument('--model', type=str, default='LeNet',  help='model')
 parser.add_argument('--dataset', type=str, default='MNIST', help='dataset')
 
 # Input
-parser.add_argument('--img_shape', type=tuple, default=(1, 32, 32), help='img_shape')
+parser.add_argument('--input_shape', type=tuple, default=(1, 32, 32), help='input_shape')
 
 # Training
 parser.add_argument('--loss_function', type=str, default='CE', help='loss_function')

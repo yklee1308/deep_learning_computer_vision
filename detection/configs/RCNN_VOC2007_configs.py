@@ -10,7 +10,7 @@ parser.add_argument('--model', type=str, default='R-CNN',  help='model')
 parser.add_argument('--dataset', type=str, default='VOC2007', help='dataset')
 
 # Input
-parser.add_argument('--img_shape', type=tuple, default=(3, 227, 227), help='img_shape')
+parser.add_argument('--input_shape', type=tuple, default=(3, 227, 227), help='input_shape')
 
 # Processing
 parser.add_argument('--num_regions', type=int, default=128, help='num_regions')
