@@ -13,7 +13,7 @@ class Tester(object):
         self.batch_size = args.batch_size
 
         # Processing
-        self.processing = getProcessing(args.model)(dataset=self.dataset, args=args)
+        self.processing = getProcessing(args.model)(dataset=self.dataset, args=args, device=self.device)
 
         # Metric
         self.metric = getMetric(args.dataset)()

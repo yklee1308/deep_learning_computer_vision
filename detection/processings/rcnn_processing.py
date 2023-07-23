@@ -9,7 +9,7 @@ from torchvision.ops import nms
 
 
 class RCNNProcessing(object):
-    def __init__(self, dataset, args):
+    def __init__(self, dataset, args, device):
         self.input_shape = dataset.input_shape
         self.num_classes = dataset.num_classes
         self.classes = dataset.classes
@@ -19,6 +19,8 @@ class RCNNProcessing(object):
         self.positive_ratio = args.positive_ratio
         self.iou_th = args.iou_th
         self.conf_score_th = args.conf_score_th
+
+        self.device = device
 
         self.region_proposals = None
         self.img_shape = None
@@ -106,8 +108,11 @@ class RCNNProcessing(object):
                 class_bboxes[i], class_conf_scores[i] = torch.stack(class_bboxes[i], dim=0), torch.stack(class_conf_scores[i], dim=0)
 
                 # NMS
-                bboxes = self.runNMS(class_bboxes[i], class_conf_scores[i], iou_th=self.iou_th)
-                x[i] = bboxes
+                bboxes = self.runNMS(class_bboxes[i].to(self.device), class_conf_scores[i].to(self.device), iou_th=self.iou_th)
+
+                for bbox in bboxes:
+                    bbox = self.processBbox(bbox)
+                    x[i].append(bbox)
 
         return x
 
@@ -177,13 +182,19 @@ class RCNNProcessing(object):
         w = np.exp(bbox_w) * region_w
         h = np.exp(bbox_h) * region_h
 
-        tl_x = int(x - (w / 2))
-        tl_y = int(y - (h / 2))
-        br_x = int(x + (w / 2))
-        br_y = int(y + (h / 2))
+        tl_x = x - (w / 2)
+        tl_y = y - (h / 2)
+        br_x = x + (w / 2)
+        br_y = y + (h / 2)
 
-        bbox = (tl_x, tl_y, br_x, br_y)
+        bbox = torch.tensor((tl_x, tl_y, br_x, br_y)).float()
 
+        return bbox
+    
+    def processBbox(self, bbox):
+        bbox = (int(torch.clamp(bbox[0], min=0, max=self.img_shape[0])), int(torch.clamp(bbox[1], min=0, max=self.img_shape[1])),
+                int(torch.clamp(bbox[2], min=0, max=self.img_shape[0])), int(torch.clamp(bbox[3], min=0, max=self.img_shape[1])))
+        
         return bbox
 
     def runSelectiveSearch(self, img):
@@ -200,7 +211,9 @@ class RCNNProcessing(object):
         return regions
     
     def runNMS(self, bboxes, conf_scores, iou_th):
-        bboxes = nms(bboxes, conf_scores, iou_threshold=iou_th)
+        bbox_indices = nms(bboxes, conf_scores, iou_threshold=iou_th)
+
+        bboxes = bboxes[bbox_indices]
 
         return bboxes
     
